@@ -106,6 +106,20 @@ abstract class AbstractWeeklyScheduledProcess implements iScheduledProcess
 	abstract protected function GetDefaultModuleSettingTime();
 
 	/**
+	 * @return \Config
+	 */
+	public function getOConfig()
+	{
+		if (!isset($this->oConfig))
+		{
+			$this->oConfig = MetaModel::GetConfig();
+		}
+
+		return $this->oConfig;
+	}
+
+
+	/**
 	 * Interpret current setting for the week days
 	 *
 	 * @returns int[] (monday = 1)
@@ -113,8 +127,6 @@ abstract class AbstractWeeklyScheduledProcess implements iScheduledProcess
 	 */
 	public function InterpretWeekDays()
 	{
-		$oConfig = (isset($this->oConfig)) ? $this->oConfig : MetaModel::GetConfig();
-
 		static $aWEEKDAYTON = array(
 			'monday' => 1,
 			'tuesday' => 2,
@@ -125,7 +137,7 @@ abstract class AbstractWeeklyScheduledProcess implements iScheduledProcess
 			'sunday' => 7,
 		);
 		$aDays = array();
-		$sWeekDays = $oConfig->GetModuleSetting(
+		$sWeekDays = $this->getOConfig()->GetModuleSetting(
 			$this->GetModuleName(),
 			static::MODULE_SETTING_WEEKDAYS,
 			static::DEFAULT_MODULE_SETTING_WEEKDAYS
@@ -165,7 +177,7 @@ abstract class AbstractWeeklyScheduledProcess implements iScheduledProcess
 	 */
 	public function GetNextOccurrence()
 	{
-		$bEnabled = MetaModel::GetConfig()->GetModuleSetting(
+		$bEnabled = $this->getOConfig()->GetModuleSetting(
 			$this->GetModuleName(),
 			static::MODULE_SETTING_ENABLED,
 			static::DEFAULT_MODULE_SETTING_ENABLED
@@ -181,7 +193,7 @@ abstract class AbstractWeeklyScheduledProcess implements iScheduledProcess
 
 		// 2nd - Find the next active week day
 		//
-		$sProcessTime = MetaModel::GetConfig()->GetModuleSetting(
+		$sProcessTime = $this->getOConfig()->GetModuleSetting(
 			$this->GetModuleName(),
 			static::MODULE_SETTING_TIME,
 			static::GetDefaultModuleSettingTime()
