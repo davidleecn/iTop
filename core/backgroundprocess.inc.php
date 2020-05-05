@@ -1,29 +1,23 @@
 <?php
-// Copyright (C) 2010-2013 Combodo SARL
-//
-//   This file is part of iTop.
-//
-//   iTop is free software; you can redistribute it and/or modify	
-//   it under the terms of the GNU Affero General Public License as published by
-//   the Free Software Foundation, either version 3 of the License, or
-//   (at your option) any later version.
-//
-//   iTop is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU Affero General Public License for more details.
-//
-//   You should have received a copy of the GNU Affero General Public License
-//   along with iTop. If not, see <http://www.gnu.org/licenses/>
-
-
 /**
- * interface iProcess
- * Something that can be executed 
+ * Copyright (C) 2010-2020 Combodo SARL
  *
- * @copyright   Copyright (C) 2010-2012 Combodo SARL
- * @license     http://opensource.org/licenses/AGPL-3.0
+ * This file is part of iTop.
+ *
+ * iTop is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * iTop is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
  */
+
+
 interface iProcess
 {
 	/**
@@ -78,7 +72,7 @@ interface iScheduledProcess extends iProcess
  * * week_days
  * * time
  *
- * Param names and some of their default values are in constant that can be overriden.
+ * Param names and some of their default values are in constant that can be overridden.
  *
  * Other info (module name and time default value) should be provided using a method that needs to be implemented.
  *
@@ -92,6 +86,11 @@ abstract class AbstractWeeklyScheduledProcess implements iScheduledProcess
 	const MODULE_SETTING_WEEKDAYS = 'week_days';
 	const DEFAULT_MODULE_SETTING_WEEKDAYS = 'monday, tuesday, wednesday, thursday, friday, saturday, sunday';
 	const MODULE_SETTING_TIME = 'time';
+
+	/**
+	 * @var Config can be used to mock config for tests
+	 */
+	protected $oConfig;
 
 	/**
 	 * Module must be declared in each implementation
@@ -114,6 +113,8 @@ abstract class AbstractWeeklyScheduledProcess implements iScheduledProcess
 	 */
 	public function InterpretWeekDays()
 	{
+		$oConfig = (isset($this->oConfig)) ? $this->oConfig : MetaModel::GetConfig();
+
 		static $aWEEKDAYTON = array(
 			'monday' => 1,
 			'tuesday' => 2,
@@ -124,7 +125,7 @@ abstract class AbstractWeeklyScheduledProcess implements iScheduledProcess
 			'sunday' => 7,
 		);
 		$aDays = array();
-		$sWeekDays = MetaModel::GetConfig()->GetModuleSetting(
+		$sWeekDays = $oConfig->GetModuleSetting(
 			$this->GetModuleName(),
 			static::MODULE_SETTING_WEEKDAYS,
 			static::DEFAULT_MODULE_SETTING_WEEKDAYS
