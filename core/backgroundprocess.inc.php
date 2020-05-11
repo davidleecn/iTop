@@ -182,9 +182,13 @@ abstract class AbstractWeeklyScheduledProcess implements iScheduledProcess
 			static::MODULE_SETTING_ENABLED,
 			static::DEFAULT_MODULE_SETTING_ENABLED
 		);
+
+		$sItopTimeZone = $this->getOConfig()->Get('timezone');
+		$timezone = new DateTimeZone($sItopTimeZone);
+
 		if (!$bEnabled)
 		{
-			return new DateTime('3000-01-01');
+			return new DateTime('3000-01-01', $timezone);
 		}
 
 		// 1st - Interpret the list of days as ordered numbers (monday = 1)
@@ -202,7 +206,8 @@ abstract class AbstractWeeklyScheduledProcess implements iScheduledProcess
 		{
 			throw new ProcessInvalidConfigException($this->GetModuleName().": wrong format for setting '".static::MODULE_SETTING_TIME."' (found '$sProcessTime')");
 		}
-		$oNow = new DateTime();
+
+		$oNow = new DateTime('now', $timezone);
 		$iNextPos = false;
 		for ($iDay = $oNow->format('N'); $iDay <= 7; $iDay++)
 		{

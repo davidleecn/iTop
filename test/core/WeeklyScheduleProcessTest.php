@@ -29,21 +29,26 @@ class TestWeeklyScheduledProcess extends ItopTestCase
 	 *
 	 * @param boolean $bEnabledValue
 	 * @param string $sTimeValue
-	 * @param \DateTime $oExpected
+	 * @param $oExpectedTimeStamp
 	 *
 	 * @throws \Exception
 	 */
-	public function TestGetNextOccurrence($bEnabledValue, $sTimeValue, $oExpected)
+	public function TestGetNextOccurrence($bEnabledValue, $sTimeValue, $oExpectedTimeStamp)
 	{
 		$oWeeklyImpl = new \WeeklyScheduledProcessMockConfig($bEnabledValue, $sTimeValue);
-		$this->assertEquals($oExpected, $oWeeklyImpl->GetNextOccurrence());
+
+		$sItopTimeZone = $oWeeklyImpl->getOConfig()->Get('timezone');
+		$timezone = new \DateTimeZone($sItopTimeZone);
+		$oExpectedDateTime = new DateTime($oExpectedTimeStamp, $timezone);
+
+		$this->assertEquals($oExpectedDateTime, $oWeeklyImpl->GetNextOccurrence());
 	}
 
 	public function GetNextOccurrenceProvider()
 	{
 		return array(
 			'Disabled process' => array(
-				false, null, new DateTime('3000-01-01')
+				false, null, '3000-01-01'
 			)
 		);
 	}
